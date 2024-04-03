@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periodic Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px; 
+            width: 90%;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #f9f9f9;
+            outline: 2px solid #d1baa8; 
+            transition: background-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            background-color: #FFFFFF; 
+        }
+        
+        button {
+            width: calc(100% - 40px);
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #d1baa8; 
+            color: #fff;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #D5C2B1; 
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            text-align: center; 
+        }
+        
+        .result p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Periodic Journey</h1>
+        <input type="text" id="inputSimbolatauNomoratom" placeholder="Masukkan Simbol Unsur (menggunakan huruf kapital (HE, CL, MN)...">
+        <button onclick="cariSifatKimia()">Cari Sifat</button>
+        <div class="result">
+            <p id="hasilAfinitas"></p>
+            <p id="hasilJariJari"></p>
+            <p id="hasilEnergiIonisasi"></p>
+            <p id="hasilKeelektronegatifan"></p>
+        </div>
+    </div>
+
+    <script>
+        const elemenData = {
+            "H": { Afinitas: "0 kJ/mol", Jarijari: "53 pm", EnergiIonisasi: "1312 kJ/mol", Keelektronegatifan: "+2.2" },
+            "HE": { Afinitas: "0 kJ/mol", Jarijari: "31 pm", EnergiIonisasi: "24.59 kJ/mol", Keelektronegatifan: "+4.5" }, 
+            "LI": { Afinitas: "59.6 kJ/mol", Jarijari: "167 pm", EnergiIonisasi: "5.39 kJ/mol", Keelektronegatifan: "+0.98" }, 
+            "BE": { Afinitas: "0 kJ/mol", Jarijari: "112 pm", EnergiIonisasi: "9.32 kJ/mol", Keelektronegatifan: "+1.57" }, 
+            "B": { Afinitas: "26.7 kJ/mol", Jarijari: "87 pm", EnergiIonisasi: "8.30 kJ/mol", Keelektronegatifan: "+2.04" },
+    "C": { Afinitas: "153.9 kJ/mol", Jarijari: "67 pm", EnergiIonisasi: "11.26 kJ/mol", Keelektronegatifan: "+2.55" },
+    "N": { Afinitas: "7 kJ/mol", Jarijari: "56 pm", EnergiIonisasi: "14.53 kJ/mol", Keelektronegatifan: "+3.04" },
+    "O": { Afinitas: "141 kJ/mol", Jarijari: "48 pm", EnergiIonisasi: "13.62 kJ/mol", Keelektronegatifan: "+3.44" },
+    "F": { Afinitas: "328 kJ/mol", Jarijari: "42 pm", EnergiIonisasi: "17.42 kJ/mol", Keelektronegatifan: "+3.98" },
+    "NE": { Afinitas: "0 kJ/mol", Jarijari: "38 pm", EnergiIonisasi: "21.56 kJ/mol", Keelektronegatifan: "+4.84" },
+    "NA": { Afinitas: "52.8 kJ/mol", Jarijari: "190 pm", EnergiIonisasi: "5.14 kJ/mol", Keelektronegatifan: "+0.93" },
+    "MG": { Afinitas: "0 kJ/mol", Jarijari: "145 pm", EnergiIonisasi: "7.65 kJ/mol", Keelektronegatifan: "+1.31" },
+    "AL": { Afinitas: "42.5 kJ/mol", Jarijari: "118 pm", EnergiIonisasi: "5.99 kJ/mol", Keelektronegatifan: "+1.61" },
+    "SI": { Afinitas: "133.6 kJ/mol", Jarijari: "111 pm", EnergiIonisasi: "8.15 kJ/mol", Keelektronegatifan: "+1.90" },
+    "P": { Afinitas: "71 kJ/mol", Jarijari: "98 pm", EnergiIonisasi: "10.49 kJ/mol", Keelektronegatifan: "+2.19" },
+    "S": { Afinitas: "200 kJ/mol", Jarijari: "88 pm", EnergiIonisasi: "10.36 kJ/mol", Keelektronegatifan: "+2.58" },
+    "CL": { Afinitas: "349 kJ/mol", Jarijari: "79 pm", EnergiIonisasi: "12.97 kJ/mol", Keelektronegatifan: "+3.16" },
+    "AR": { Afinitas: "0 kJ/mol", Jarijari: "71 pm", EnergiIonisasi: "15.76 kJ/mol", Keelektronegatifan: "+3.2" },
+    "K": { Afinitas: "48.4 kJ/mol", Jarijari: "243 pm", EnergiIonisasi: "4.34 kJ/mol", Keelektronegatifan: "+0.82" },
+    "CA": { Afinitas: "2.37 kJ/mol", Jarijari: "194 pm", EnergiIonisasi: "6.11 kJ/mol", Keelektronegatifan: "+1" },
+    "SC": { Afinitas: "18.1 kJ/mol", Jarijari: "184 pm", EnergiIonisasi: "6.56 kJ/mol", Keelektronegatifan: "+1.36" },
+    "TI": { Afinitas: "7.6 kJ/mol", Jarijari: "176 pm", EnergiIonisasi: "6.83 kJ/mol", Keelektronegatifan: "+1.54" },
+    "V": { Afinitas: "50.6 kJ/mol", Jarijari: "171 pm", EnergiIonisasi: "6.75 kJ/mol", Keelektronegatifan: "+1.63" },
+    "CR": { Afinitas: "64.3 kJ/mol", Jarijari: "166 pm", EnergiIonisasi: "6.77 kJ/mol", Keelektronegatifan: "+1.66" },
+    "MN": { Afinitas: "0 kJ/mol", Jarijari: "161 pm", EnergiIonisasi: "7.43 kJ/mol", Keelektronegatifan: "+1.55" },
+    "FE": { Afinitas: "15.7 kJ/mol", Jarijari: "156 pm", EnergiIonisasi: "7.9 kJ/mol", Keelektronegatifan: "+1.83" },
+    "CO": { Afinitas: "63.7 kJ/mol", Jarijari: "152 pm", EnergiIonisasi: "7.88 kJ/mol", Keelektronegatifan: "+1.88" },
+    "NI": { Afinitas: "112 kJ/mol", Jarijari: "149 pm", EnergiIonisasi: "7.64 kJ/mol", Keelektronegatifan: "+1.91" },
+    "CU": { Afinitas: "118.4 kJ/mol", Jarijari: "145 pm", EnergiIonisasi: "7.73 kJ/mol", Keelektronegatifan: "+1.9" },
+    "ZN": { Afinitas: "0 kJ/mol", Jarijari: "142 pm", EnergiIonisasi: "9.39 kJ/mol", Keelektronegatifan: "+1.65" },
+    "GA": { Afinitas: "28.9 kJ/mol", Jarijari: "136 pm", EnergiIonisasi: "6 kJ/mol", Keelektronegatifan: "+1.81" },
+    "GE": { Afinitas: "119 kJ/mol", Jarijari: "125 pm", EnergiIonisasi: "7.90 kJ/mol", Keelektronegatifan: "+2.01" },
+    "AS": { Afinitas: "78 kJ/mol", Jarijari: "114 pm", EnergiIonisasi: "9.79 kJ/mol", Keelektronegatifan: "+2.18" },
+    "SE": { Afinitas: "195 kJ/mol", Jarijari: "103 pm", EnergiIonisasi: "9.75 kJ/mol", Keelektronegatifan: "+2.55" },
+    "BR": { Afinitas: "324.6 kJ/mol", Jarijari: "94 pm", EnergiIonisasi: "11.81 kJ/mol", Keelektronegatifan: "+2.96" },
+    "KR": { Afinitas: "0 kJ/mol", Jarijari: "88 pm", EnergiIonisasi: "14 kJ/mol", Keelektronegatifan: "+3" },
+    "RB": { Afinitas: "46.9 kJ/mol", Jarijari: "265 pm", EnergiIonisasi: "4.18 kJ/mol", Keelektronegatifan: "+0.82" },
+    "SR": { Afinitas: "5.03 kJ/mol", Jarijari: "219 pm", EnergiIonisasi: "5.69 kJ/mol", Keelektronegatifan: "+0.95" },
+    "Y": { Afinitas: "29.6 kJ/mol", Jarijari: "212 pm", EnergiIonisasi: "6.22 kJ/mol", Keelektronegatifan: "+1.22" },
+    "ZR": { Afinitas: "41.1 kJ/mol", Jarijari: "206 pm", EnergiIonisasi: "6.63 kJ/mol", Keelektronegatifan: "+1.33" },
+    "NB": { Afinitas: "86.1 kJ/mol", Jarijari: "198 pm", EnergiIonisasi: "6.76 kJ/mol", Keelektronegatifan: "+1.6" },
+    "MO": { Afinitas: "71.9 kJ/mol", Jarijari: "190 pm", EnergiIonisasi: "7.09 kJ/mol", Keelektronegatifan: "+2.16" },
+    "TC": { Afinitas: "53 kJ/mol", Jarijari: "183 pm", EnergiIonisasi: "7.28 kJ/mol", Keelektronegatifan: "+1.9" },
+    "RU": { Afinitas: "101.3 kJ/mol", Jarijari: "178 pm", EnergiIonisasi: "7.36 kJ/mol", Keelektronegatifan: "+2.2" },
+    "RH": { Afinitas: "109.7 kJ/mol", Jarijari: "173 pm", EnergiIonisasi: "7.46 kJ/mol", Keelektronegatifan: "+2.28" },
+    "PD": { Afinitas: "53.7 kJ/mol", Jarijari: "169 pm", EnergiIonisasi: "8.34 kJ/mol", Keelektronegatifan: "+2.2" },
+    "AG": { Afinitas: "125.6 kJ/mol", Jarijari: "165 pm", EnergiIonisasi: "7.58 kJ/mol", Keelektronegatifan: "+1.93" },
+    "CD": { Afinitas: "0 kJ/mol", Jarijari: "161 pm", EnergiIonisasi: "8.99 kJ/mol", Keelektronegatifan: "+1.69" },
+    "IN": { Afinitas: "28.9 kJ/mol", Jarijari: "156 pm", EnergiIonisasi: "5.79 kJ/mol", Keelektronegatifan: "+1.78" },
+    "SN": { Afinitas: "107.3 kJ/mol", Jarijari: "145 pm", EnergiIonisasi: "7.34 kJ/mol", Keelektronegatifan: "+1.96" },
+    "SB": { Afinitas: "103.2 kJ/mol", Jarijari: "133 pm", EnergiIonisasi: "8.61 kJ/mol", Keelektronegatifan: "+2.05" },
+    "TE": { Afinitas: "190.2 kJ/mol", Jarijari: "123 pm", EnergiIonisasi: "9.01 kJ/mol", Keelektronegatifan: "+2.1" },
+    "I": { Afinitas: "295.2 kJ/mol", Jarijari: "115 pm", EnergiIonisasi: "10.45 kJ/mol", Keelektronegatifan: "+2.66" },
+    "XE": { Afinitas: "0 kJ/mol", Jarijari: "108 pm", EnergiIonisasi: "12.13 kJ/mol", Keelektronegatifan: "+2.6" },
+    "CS": { Afinitas: "45.5 kJ/mol", Jarijari: "298 pm", EnergiIonisasi: "3.89 kJ/mol", Keelektronegatifan: "+0.79" },
+    "BA": { Afinitas: "13.95 kJ/mol", Jarijari: "253 pm", EnergiIonisasi: "5.21 kJ/mol", Keelektronegatifan: "+0.89" },
+    "LA": { Afinitas: "48 kJ/mol", Jarijari: "195 pm", EnergiIonisasi: "5.58 kJ/mol", Keelektronegatifan: "+1.1" },
+    "CE": { Afinitas: "50 kJ/mol", Jarijari: "185 pm", EnergiIonisasi: "5.54 kJ/mol", Keelektronegatifan: "+1.12" },
+    "PR": { Afinitas: "50 kJ/mol", Jarijari: "247 pm", EnergiIonisasi: "5.47 kJ/mol", Keelektronegatifan: "+1.13" },
+    "ND": { Afinitas: "50 kJ/mol", Jarijari: "206 pm", EnergiIonisasi: "5.53 kJ/mol", Keelektronegatifan: "+1.14" },
+    "PM": { Afinitas: "50 kJ/mol", Jarijari: "205 pm", EnergiIonisasi: "5.58 kJ/mol", Keelektronegatifan: "+1.13" },
+    "SM": { Afinitas: "50 kJ/mol", Jarijari: "238 pm", EnergiIonisasi: "5.64 kJ/mol", Keelektronegatifan: "+1.17" },
+    "EU": { Afinitas: "50 kJ/mol", Jarijari: "231 pm", EnergiIonisasi: "5.67 kJ/mol", Keelektronegatifan: "+1.2" },
+    "GD": { Afinitas: "50 kJ/mol", Jarijari: "233 pm", EnergiIonisasi: "6.15 kJ/mol", Keelektronegatifan: "+1.2" },
+    "TB": { Afinitas: "50 kJ/mol", Jarijari: "225 pm", EnergiIonisasi: "5.86 kJ/mol", Keelektronegatifan: "+1.2" },
+    "DY": { Afinitas: "50 kJ/mol", Jarijari: "228 pm", EnergiIonisasi: "5.94 kJ/mol", Keelektronegatifan: "+1.22" },
+    "HO": { Afinitas: "50 kJ/mol", Jarijari: "226 pm", EnergiIonisasi: "6.02 kJ/mol", Keelektronegatifan: "+1.23" },
+    "ER": { Afinitas: "50 kJ/mol", Jarijari: "226 pm", EnergiIonisasi: "6.11 kJ/mol", Keelektronegatifan: "+1.24" },
+    "TM": { Afinitas: "50 kJ/mol", Jarijari: "222 pm", EnergiIonisasi: "6.18 kJ/mol", Keelektronegatifan: "+1.25" },
+    "YB": { Afinitas: "50 kJ/mol", Jarijari: "222 pm", EnergiIonisasi: "6.25 kJ/mol", Keelektronegatifan: "+1.1" },
+    "LU": { Afinitas: "50 kJ/mol", Jarijari: "217 pm", EnergiIonisasi: "5.43 kJ/mol", Keelektronegatifan: "+1.27" },
+    "HF": { Afinitas: "0 kJ/mol", Jarijari: "208 pm", EnergiIonisasi: "6.83 kJ/mol", Keelektronegatifan: "+1.3" },
+    "TA": { Afinitas: "31 kJ/mol", Jarijari: "200 pm", EnergiIonisasi: "7.55 kJ/mol", Keelektronegatifan: "+1.5" },
+    "W": { Afinitas: "78.6 kJ/mol", Jarijari: "193 pm", EnergiIonisasi: "7.86 kJ/mol", Keelektronegatifan: "+2.36" },
+    "RE": { Afinitas: "14.5 kJ/mol", Jarijari: "188 pm", EnergiIonisasi: "7.83 kJ/mol", Keelektronegatifan: "+1.9" },
+    "OS": { Afinitas: "106.1 kJ/mol", Jarijari: "185 pm", EnergiIonisasi: "8.44 kJ/mol", Keelektronegatifan: "+2.2" },
+    "IR": { Afinitas: "151 kJ/mol", Jarijari: "180 pm", EnergiIonisasi: "8.97 kJ/mol", Keelektronegatifan: "+2.2" },
+    "PT": { Afinitas: "205.3 kJ/mol", Jarijari: "177 pm", EnergiIonisasi: "8.96 kJ/mol", Keelektronegatifan: "+2.28" },
+    "AU": { Afinitas: "222.8 kJ/mol", Jarijari: "174 pm", EnergiIonisasi: "9.23 kJ/mol", Keelektronegatifan: "+2.54" },
+    "HG": { Afinitas: "0 kJ/mol", Jarijari: "171 pm", EnergiIonisasi: "10.44 kJ/mol", Keelektronegatifan: "+2" },
+    "TL": { Afinitas: "19.2 kJ/mol", Jarijari: "156 pm", EnergiIonisasi: "6.11 kJ/mol", Keelektronegatifan: "+1.62" },
+    "PB": { Afinitas: "35.1 kJ/mol", Jarijari: "154 pm", EnergiIonisasi: "7.42 kJ/mol", Keelektronegatifan: "+1.87" },
+    "BI": { Afinitas: "91.2 kJ/mol", Jarijari: "143 pm", EnergiIonisasi: "7.29 kJ/mol", Keelektronegatifan: "+2.02" },
+    "PO": { Afinitas: "183.3 kJ/mol", Jarijari: "135 pm", EnergiIonisasi: "8.42 kJ/mol", Keelektronegatifan: "+2" },
+    "AT": { Afinitas: "270.1 kJ/mol", Jarijari: "127 pm", EnergiIonisasi: "9.3 kJ/mol", Keelektronegatifan: "+2.2" },
+    "RN": { Afinitas: "0 kJ/mol", Jarijari: "120 pm", EnergiIonisasi: "10.75 kJ/mol", Keelektronegatifan: "+2.2" },
+    "FR": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "4.07 kJ/mol", Keelektronegatifan: "+0.7" },
+    "RA": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "5.28 kJ/mol", Keelektronegatifan: "+0.9" },
+    "AC": { Afinitas: "0 kJ/mol", Jarijari: "195", EnergiIonisasi: "5.17 kJ/mol", Keelektronegatifan: "+1.1" },
+    "TH": { Afinitas: "0 kJ/mol", Jarijari: "180", EnergiIonisasi: "6.31 kJ/mol", Keelektronegatifan: "+1.3" },
+    "PA": { Afinitas: "0 kJ/mol", Jarijari: "180", EnergiIonisasi: "5.89 kJ/mol", Keelektronegatifan: "+1.5" },
+    "U": { Afinitas: "0 kJ/mol", Jarijari: "175", EnergiIonisasi: "6.19 kJ/mol", Keelektronegatifan: "+1.38" },
+    "NP": { Afinitas: "0 kJ/mol", Jarijari: "175", EnergiIonisasi: "6.72 kJ/mol", Keelektronegatifan: "+1.36" },
+    "PU": { Afinitas: "0 kJ/mol", Jarijari: "175", EnergiIonisasi: "6.03 kJ/mol", Keelektronegatifan: "+1.28" },
+    "AM": { Afinitas: "0 kJ/mol", Jarijari: "175", EnergiIonisasi: "5.97 kJ/mol", Keelektronegatifan: "+1.13" },
+    "CM": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "5.99 kJ/mol", Keelektronegatifan: "+1.28" },
+    "BK": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.2 kJ/mol", Keelektronegatifan: "+1.3" },
+    "CF": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.28 kJ/mol", Keelektronegatifan: "+1.3" },
+    "ES": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.42 kJ/mol", Keelektronegatifan: "+1.3" },
+    "FM": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.5 kJ/mol", Keelektronegatifan: "+1.3" },
+    "MD": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.58 kJ/mol", Keelektronegatifan: "+1.3" },
+    "NO": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "6.65 kJ/mol", Keelektronegatifan: "+1.3" },
+    "LR": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "4.9 kJ/mol", Keelektronegatifan: "+1.3" },
+    "RF": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "DB": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "SG": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "BH": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "HS": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "MT": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "DS": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "RG": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "CN": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "NH": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "FL": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "MC": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "LV": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "TS": { Afinitas: "0 kJ/mol", Jarijari: "0", EnergiIonisasi: "0", Keelektronegatifan: "-" },
+    "OG": { Afinitas: "0 kJ/mol", Jarijari: "5 pm", EnergiIonisasi: "0", Keelektronegatifan: "-" }
+            // Rest of the data
+        };
+
+        function cariSifatKimia() {
+            const simbol = document.getElementById("inputSimbolatauNomoratom").value.toUpperCase();
+            const hasilAfinitas = document.getElementById("hasilAfinitas");
+            const hasilJariJari = document.getElementById("hasilJariJari");
+            const hasilEnergiIonisasi = document.getElementById("hasilEnergiIonisasi");
+            const hasilKeelektronegatifan = document.getElementById("hasilKeelektronegatifan");
+            
+            if (elemenData.hasOwnProperty(simbol)) {
+                hasilAfinitas.innerText = "Afinitas Elektron: " + elemenData[simbol].Afinitas;
+                hasilJariJari.innerText = "Jari-jari atom: " + elemenData[simbol].Jarijari;
+                hasilEnergiIonisasi.innerText = "Energi Ionisasi: " + elemenData[simbol].EnergiIonisasi;
+                hasilKeelektronegatifan.innerText = "Keelektronegatifan: " + elemenData[simbol].Keelektronegatifan;
+            } else {
+                alert("Data tidak ditemukan untuk unsur dengan simbol atau nomor atom tersebut.");
+            }
+        }
+    </script>
+</body>
+</html>
